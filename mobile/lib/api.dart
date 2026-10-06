@@ -150,8 +150,10 @@ class AmbilApi {
 
   Future<String?> createApiKey(String name) async {
     final d = await _post('/user/api-keys', {'name': name});
-    // backend mengembalikan key mentah hanya saat dibuat
-    return (d['api_key'] ?? d['key'] ?? d['token'])?.toString();
+    // backend: {success, api_key: {id, key, name}, warning}
+    final ak = d['api_key'];
+    if (ak is Map) return ak['key']?.toString();
+    return (d['key'] ?? d['token'])?.toString();
   }
 
   Future<void> requestApiAccess() async {
